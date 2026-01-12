@@ -1,16 +1,5 @@
-import { SignUpForm } from '@/components/SignUpForm';
-import { Stack, Link } from 'expo-router';
-
-import { Text, View } from 'react-native';
+import { Redirect } from 'expo-router';
 
 export default function Home() {
-  return (
-    <View className={styles.container}>
-      <SignUpForm />
-    </View>
-  );
+  return <Redirect href="/sign-up" />;
 }
-
-const styles = {
-  container: 'flex flex-1 bg-background',
-};
