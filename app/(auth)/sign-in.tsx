@@ -4,16 +4,18 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Separator } from '@/components/ui/Separator';
 import { Text } from '@/components/ui/Text';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
 import * as React from 'react';
-import { Pressable, TextInput, View, Alert } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react-native';
 
 const signInSchema = z.object({
-  email: z.email('Please enter a valid email address'),
+  email: z.string().email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -22,6 +24,8 @@ type SignInFormData = z.infer<typeof signInSchema>;
 export default function SignIn() {
   const passwordInputRef = React.useRef<TextInput>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [authError, setAuthError] = React.useState<string | null>(null);
+  const [authSuccess, setAuthSuccess] = React.useState(false);
   const router = useRouter();
 
   const {
@@ -43,6 +47,8 @@ export default function SignIn() {
   const onSubmit = handleSubmit(async (data: SignInFormData) => {
     try {
       setIsLoading(true);
+      setAuthError(null);
+      setAuthSuccess(false);
 
       const { error } = await supabase.auth.signInWithPassword({
         email: data.email,
@@ -50,12 +56,15 @@ export default function SignIn() {
       });
 
       if (error) {
-        Alert.alert('Error', error.message);
+        setAuthError(error.message);
+        setAuthSuccess(false);
       } else {
-        Alert.alert('Success!', 'You have been signed in successfully.');
+        setAuthSuccess(true);
+        setAuthError(null);
       }
     } catch {
-      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+      setAuthError('An unexpected error occurred. Please try again.');
+      setAuthSuccess(false);
     } finally {
       setIsLoading(false);
     }
@@ -71,6 +80,22 @@ export default function SignIn() {
           </CardDescription>
         </CardHeader>
         <CardContent className="gap-6">
+          {/* Error Alert */}
+          {authError && (
+            <Alert icon={AlertCircleIcon} variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{authError}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Success Alert */}
+          {authSuccess && (
+            <Alert icon={CheckCircleIcon} variant="success">
+              <AlertTitle>Success!</AlertTitle>
+              <AlertDescription>You have been signed in successfully.</AlertDescription>
+            </Alert>
+          )}
+
           <View className="gap-6">
             <View className="gap-1.5">
               <Label htmlFor="email">Email</Label>

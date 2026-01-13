@@ -15,27 +15,35 @@ function Alert({
 }: ViewProps &
   React.RefAttributes<View> & {
     icon: LucideIcon;
-    variant?: 'default' | 'destructive';
+    variant?: 'default' | 'destructive' | 'success';
     iconClassName?: string;
   }) {
   return (
     <TextClassContext.Provider
       value={cn(
         'text-sm text-foreground',
-        variant === 'destructive' && 'text-destructive',
+        variant === 'destructive' && 'bg-destructive/20 text-destructive',
+        variant === 'success' && 'text-emerald-700 bg-emerald-100',
         className
       )}>
       <View
         role="alert"
         className={cn(
           'relative w-full rounded-lg border border-border bg-card px-4 pb-2 pt-3.5',
+          variant === 'success' && 'bg-emerald-100 text-emerald-700',
+          variant === 'destructive' && 'bg-destructive/20 text-destructive',
           className
         )}
         {...props}>
         <View className="absolute left-3.5 top-3">
           <Icon
             as={icon}
-            className={cn('size-4', variant === 'destructive' && 'text-destructive', iconClassName)}
+            className={cn(
+              'size-4',
+              variant === 'destructive' && 'text-destructive',
+              variant === 'success' && 'text-emerald-700',
+              iconClassName
+            )}
           />
         </View>
         {children}
@@ -69,6 +77,7 @@ function AlertDescription({
       className={cn(
         'ml-0.5 bg-transparent pb-1.5 pl-6 text-sm leading-relaxed text-muted-foreground',
         textClass?.includes('text-destructive') && 'text-destructive/90',
+        textClass?.includes('text-emerald-700') && 'text-emerald-700',
         className
       )}
       {...props}

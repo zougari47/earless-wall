@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Separator } from '@/components/ui/Separator';
 import { Text } from '@/components/ui/Text';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
 import * as React from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
@@ -11,11 +12,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
-import { AlertCircleIcon } from 'lucide-react-native';
+import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react-native';
 
 const signUpSchema = z.object({
-  email: z.email('Please enter a valid email address'),
+  email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters long'),
 });
 
@@ -24,6 +24,8 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 export default function SignUp() {
   const passwordInputRef = React.useRef<TextInput>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [authError, setAuthError] = React.useState<string | null>(null);
+  const [authSuccess, setAuthSuccess] = React.useState(false);
   const router = useRouter();
 
   const {
@@ -45,6 +47,8 @@ export default function SignUp() {
   const onSubmit = handleSubmit(async (data: SignUpFormData) => {
     try {
       setIsLoading(true);
+      setAuthError(null);
+      setAuthSuccess(false);
 
       const { error } = await supabase.auth.signUp({
         email: data.email,
@@ -52,16 +56,15 @@ export default function SignUp() {
       });
 
       if (error) {
-        // Alert.alert('Error', error.message);
+        setAuthError(error.message);
+        setAuthSuccess(false);
       } else {
-        // Alert.alert(
-        //   'Success!',
-        //   'Account created successfully. Please check your email to verify your account.',
-        //   [{ text: 'OK' }]
-        // );
+        setAuthSuccess(true);
+        setAuthError(null);
       }
     } catch {
-      // Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+      setAuthError('An unexpected error occurred. Please try again.');
+      setAuthSuccess(false);
     } finally {
       setIsLoading(false);
     }
@@ -77,6 +80,24 @@ export default function SignUp() {
           </CardDescription>
         </CardHeader>
         <CardContent className="gap-6">
+          {/* Error Alert */}
+          {authError && (
+            <Alert icon={AlertCircleIcon} variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{authError}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Success Alert */}
+          {authSuccess && (
+            <Alert icon={CheckCircleIcon} variant="success">
+              <AlertTitle>Success!</AlertTitle>
+              <AlertDescription>
+                Account created successfully. Please check your email to verify your account.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <View className="gap-6">
             <View className="gap-1.5">
               <Label htmlFor="email">Email</Label>
