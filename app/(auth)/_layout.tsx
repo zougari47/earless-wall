@@ -1,7 +1,15 @@
-import { Stack } from 'expo-router';
+import { Stack, Redirect } from 'expo-router';
 import { View } from 'react-native';
+import { useAuthContext } from '@/hooks/UseAuthContext';
 
 export default function AuthLayout() {
+  const { isLoggedIn } = useAuthContext();
+
+  // If already authenticated, redirect to protected area
+  if (isLoggedIn) {
+    return <Redirect href="/" />;
+  }
+
   return (
     <View className="flex-1">
       <Stack

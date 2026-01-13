@@ -4,7 +4,6 @@ import { ThemeProvider } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
 
 import { NAV_THEME } from '@/lib/theme';
 

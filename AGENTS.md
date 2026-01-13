@@ -10,25 +10,6 @@ Earless Wall is an E2E encrypted real-time chat application built with React Nat
 - **iOS/Android** (React Native APIs, AsyncStorage)
 - **Cross-platform compatibility** is required for all features
 
-## Development Commands
-
-### Core Commands
-
-- `pnpm start` - Start Expo development server
-- `pnpm android` - Run on Android device/emulator
-- `pnpm ios` - Run on iOS device/simulator
-- `pnpm web` - Run in web browser
-- `pnpm prebuild` - Generate native code
-
-### Code Quality
-
-- `pnpm lint` - Run ESLint and Prettier checks
-- `pnpm format` - Auto-fix ESLint issues and format code
-
-### Testing
-
-No test framework is currently configured. When adding tests, prefer Jest with React Native Testing Library.
-
 ## Architecture
 
 ### Tech Stack
