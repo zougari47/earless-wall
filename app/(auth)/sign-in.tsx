@@ -25,7 +25,6 @@ export default function SignIn() {
   const passwordInputRef = React.useRef<TextInput>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [authError, setAuthError] = React.useState<string | null>(null);
-  const [authSuccess, setAuthSuccess] = React.useState(false);
   const router = useRouter();
 
   const {
@@ -48,7 +47,6 @@ export default function SignIn() {
     try {
       setIsLoading(true);
       setAuthError(null);
-      setAuthSuccess(false);
 
       const { error } = await supabase.auth.signInWithPassword({
         email: data.email,
@@ -57,14 +55,12 @@ export default function SignIn() {
 
       if (error) {
         setAuthError(error.message);
-        setAuthSuccess(false);
       } else {
-        setAuthSuccess(true);
-        setAuthError(null);
+        // Redirect to home on successful login
+        router.push('/');
       }
     } catch {
       setAuthError('An unexpected error occurred. Please try again.');
-      setAuthSuccess(false);
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +68,7 @@ export default function SignIn() {
 
   return (
     <View className="flex h-screen w-screen bg-background">
-      <Card className=" m-auto w-11/12 max-w-lg">
+      <Card className="m-auto w-11/12 max-w-lg">
         <CardHeader>
           <CardTitle className="text-center text-xl">Welcome back</CardTitle>
           <CardDescription className="text-center">
@@ -85,14 +81,6 @@ export default function SignIn() {
             <Alert icon={AlertCircleIcon} variant="destructive">
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>{authError}</AlertDescription>
-            </Alert>
-          )}
-
-          {/* Success Alert */}
-          {authSuccess && (
-            <Alert icon={CheckCircleIcon} variant="success">
-              <AlertTitle>Success!</AlertTitle>
-              <AlertDescription>You have been signed in successfully.</AlertDescription>
             </Alert>
           )}
 

@@ -2,23 +2,50 @@ import { PortalHost } from '@rn-primitives/portal';
 import { Stack } from 'expo-router';
 import { ThemeProvider } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 
 import { NAV_THEME } from '@/lib/theme';
 
 import '../global.css';
+import { useAuthContext } from '@/hooks/UseAuthContext';
+import AuthProvider from '@/providers/AuthProvider';
+import { SplashScreenController } from '@/components/SplashScreenController';
 
-export default function RootLayout() {
-  const { colorScheme: theme } = useColorScheme();
+// Separate RootNavigator so we can access the AuthContext
+function RootNavigator() {
+  const { isLoggedIn } = useAuthContext();
 
   return (
-    <ThemeProvider value={NAV_THEME[theme ?? 'light']}>
-      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
-      <GestureHandlerRootView style={{ flex: 1 }} className={theme}>
-        <Stack screenOptions={{ headerShown: false }} />
+    <Stack>
+      <Stack.Protected guard={isLoggedIn}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!isLoggedIn}>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      </Stack.Protected>
+
+      <Stack.Screen name="+not-found" />
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  const { colorScheme: theme, setColorScheme } = useColorScheme();
+
+  useEffect(() => {
+    setColorScheme('dark');
+  }, []);
+
+  return (
+    <ThemeProvider value={NAV_THEME[theme ?? 'dark']}>
+      <AuthProvider>
+        <SplashScreenController />
+        <RootNavigator />
+        <StatusBar style="auto" />
         <PortalHost />
-      </GestureHandlerRootView>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

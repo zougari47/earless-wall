@@ -40,3 +40,8 @@ participant LS as Local Storage
     R-->>RecipientA: Deliver encrypted message
     RecipientA->>RecipientLS: Store locally
     RecipientA->>RecipientA: Decrypt and display
+
+## TODO
+
+- make redirect to the home page if already login in both the /signin & /signup
+- create a loading component
