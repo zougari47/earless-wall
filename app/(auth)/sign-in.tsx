@@ -12,10 +12,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react-native';
+import { AlertCircleIcon } from 'lucide-react-native';
 
 const signInSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+  email: z.email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -57,7 +57,7 @@ export default function SignIn() {
         setAuthError(error.message);
       } else {
         // Redirect to home on successful login
-        router.push('/');
+        router.push('/contact');
       }
     } catch {
       setAuthError('An unexpected error occurred. Please try again.');
