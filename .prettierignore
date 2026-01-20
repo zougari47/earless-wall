@@ -1,0 +1,20 @@
+# Ignore artifacts:
+node_modules
+.expo/
+dist/
+web-build/
+.jsc/
+.npm/
+
+# Ignore native build directories
+android/
+ios/
+
+# Ignore lock files
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Ignore other files
+*.md
+.DS_Store
