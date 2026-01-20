@@ -11,6 +11,7 @@ import '../global.css';
 import { useAuthContext } from '@/hooks/UseAuthContext';
 import AuthProvider from '@/providers/AuthProvider';
 import { SplashScreenController } from '@/components/SplashScreenController';
+import QueryProvider from '@/providers/QueryProvider';
 
 // Separate RootNavigator so we can access the AuthContext
 function RootNavigator() {
@@ -40,12 +41,14 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={NAV_THEME[theme ?? 'dark']}>
-      <AuthProvider>
-        <SplashScreenController />
-        <RootNavigator />
-        <StatusBar style="auto" />
-        <PortalHost />
-      </AuthProvider>
+      <QueryProvider>
+        <AuthProvider>
+          <SplashScreenController />
+          <RootNavigator />
+          <StatusBar style="auto" />
+          <PortalHost />
+        </AuthProvider>
+      </QueryProvider>
     </ThemeProvider>
   );
 }
