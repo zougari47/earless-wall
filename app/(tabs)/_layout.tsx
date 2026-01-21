@@ -20,6 +20,15 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => <Icon as={MessageSquare} color={color} size={size} />,
         }}
       />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'index',
+          tabBarItemStyle: {
+            display: 'none',
+          },
+        }}
+      />
     </Tabs>
   );
 }
