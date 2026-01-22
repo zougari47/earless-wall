@@ -1,9 +1,19 @@
-import { Tabs } from 'expo-router';
-import { BookUser, MessageSquare } from 'lucide-react-native';
-
+import { Tabs, useRouter } from 'expo-router';
+import { BookUser, MessageSquare, LogOut } from 'lucide-react-native';
 import { Icon } from '@/components/ui/Icon';
+import { useAuthContext } from '@/hooks/UseAuthContext';
+import { useEffect } from 'react';
 
 export default function TabLayout() {
+  const { profile } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!profile) {
+      router.push('/(tabs)/complete-profile');
+    }
+  });
+
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: 'blue', headerShown: false }}>
       <Tabs.Screen
@@ -21,9 +31,26 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Logout',
+          tabBarIcon: ({ color, size }) => <Icon as={LogOut} color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
           title: 'index',
+          tabBarItemStyle: {
+            display: 'none',
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="complete-profile"
+        options={{
+          title: 'Complete Profile',
+          tabBarStyle: { display: 'none' },
           tabBarItemStyle: {
             display: 'none',
           },

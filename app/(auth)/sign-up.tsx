@@ -14,15 +14,22 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
 import { AlertCircleIcon, CheckCircleIcon } from 'lucide-react-native';
 
-const signUpSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
-});
+const signUpSchema = z
+  .object({
+    email: z.string().email('Please enter a valid email address'),
+    password: z.string().min(6, 'Password must be at least 6 characters long'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export default function SignUp() {
   const passwordInputRef = React.useRef<TextInput>(null);
+  const confirmPasswordInputRef = React.useRef<TextInput>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [authError, setAuthError] = React.useState<string | null>(null);
   const [authSuccess, setAuthSuccess] = React.useState(false);
@@ -37,11 +44,16 @@ export default function SignUp() {
     defaultValues: {
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
   function onEmailSubmitEditing() {
     passwordInputRef.current?.focus();
+  }
+
+  function onPasswordSubmitEditing() {
+    confirmPasswordInputRef.current?.focus();
   }
 
   const onSubmit = handleSubmit(async (data: SignUpFormData) => {
@@ -139,13 +151,39 @@ export default function SignUp() {
                     onChangeText={onChange}
                     onBlur={onBlur}
                     secureTextEntry
-                    returnKeyType="send"
-                    onSubmitEditing={onSubmit}
+                    returnKeyType="next"
+                    onSubmitEditing={onPasswordSubmitEditing}
+                    submitBehavior="submit"
                   />
                 )}
               />
               {errors.password && (
                 <Text className="text-sm text-destructive">{errors.password.message}</Text>
+              )}
+            </View>
+            <View className="gap-1.5">
+              <View className="flex-row items-center">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+              </View>
+              <Controller
+                control={control}
+                name="confirmPassword"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    ref={confirmPasswordInputRef}
+                    id="confirmPassword"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    secureTextEntry
+                    returnKeyType="send"
+                    onSubmitEditing={onSubmit}
+                    submitBehavior="submit"
+                  />
+                )}
+              />
+              {errors.confirmPassword && (
+                <Text className="text-sm text-destructive">{errors.confirmPassword.message}</Text>
               )}
             </View>
             <Button className="w-full" onPress={onSubmit} disabled={isLoading}>

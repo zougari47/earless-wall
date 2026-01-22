@@ -13,7 +13,7 @@ async function onSignOutButtonPress() {
 
 export default function SignOutButton() {
   return (
-    <Button className="w-full" onPress={onSignOutButtonPress}>
+    <Button variant="secondary" className="w-full" onPress={onSignOutButtonPress}>
       <Text>Signout</Text>
     </Button>
   );

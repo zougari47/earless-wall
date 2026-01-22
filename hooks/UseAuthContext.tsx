@@ -1,9 +1,10 @@
+import { Tables } from '@/supabase/types';
 import { Session } from '@supabase/supabase-js';
 import { createContext, useContext } from 'react';
 
 export type AuthData = {
   session?: Session | null;
-  profile?: any | null;
+  profile?: Tables<'profiles'> | null;
   isLoading: boolean;
   isLoggedIn: boolean;
 };

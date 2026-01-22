@@ -57,7 +57,7 @@ export default function SignIn() {
         setAuthError(error.message);
       } else {
         // Redirect to home on successful login
-        router.push('/contact');
+        router.push('/');
       }
     } catch {
       setAuthError('An unexpected error occurred. Please try again.');

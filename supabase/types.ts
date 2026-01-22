@@ -61,22 +61,43 @@ export type Database = {
           status?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "contacts_friend_id_fkey"
+            columns: ["friend_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
+          created_at: string
           id: string
           name: string
+          onboarding_completed: boolean
           username: string
         }
         Insert: {
+          created_at?: string
           id: string
           name: string
+          onboarding_completed?: boolean
           username: string
         }
         Update: {
+          created_at?: string
           id?: string
           name?: string
+          onboarding_completed?: boolean
           username?: string
         }
         Relationships: []
