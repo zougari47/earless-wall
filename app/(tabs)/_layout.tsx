@@ -12,7 +12,7 @@ export default function TabLayout() {
     if (!profile) {
       router.push('/(tabs)/complete-profile');
     }
-  });
+  }, []);
 
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: 'blue', headerShown: false }}>

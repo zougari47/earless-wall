@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { AlertCircleIcon } from 'lucide-react-native';
 import { useAuthContext } from '@/hooks/UseAuthContext';
 import SignOutButton from '@/components/Signout';
+import { useEffect } from 'react';
 
 const completeProfileSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters long'),
@@ -27,6 +28,12 @@ export default function CompleteProfile() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (currentProfile) {
+      router.push('/(tabs)/contact');
+    }
+  }, []);
 
   const {
     control,
