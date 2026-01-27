@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/Dialog';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
+import { Alert, AlertDescription } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
 
@@ -30,45 +30,29 @@ export function AddContactDialog() {
   const addContactMutation = useMutation({
     mutationFn: async (targetUsername: string) => {
       if (!session?.user?.id) throw new Error('No user session');
+      if (!targetUsername.trim()) throw new Error('Username is required');
 
       // 1. Find user by username
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, username')
         .eq('username', targetUsername)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
-        if (profileError.code === 'PGRST116') {
-          throw new Error('There is no user with that username');
-        }
-        throw profileError;
+        console.error('Error searching user:', profileError);
+        throw new Error('Failed to search for user. Please check your connection.');
       }
 
       if (!profile) {
-        throw new Error('There is no user with that username');
+        throw new Error(`User @${targetUsername} not found`);
       }
 
       if (profile.id === session.user.id) {
-        throw new Error('You cannot add yourself');
+        throw new Error("You can't add yourself as a contact");
       }
 
-      // 2. Create contact relationship
-      const { error: contactError } = await supabase.from('contacts').insert({
-        user_id: session.user.id,
-        friend_id: profile.id,
-        status: 'pending',
-      });
-
-      if (contactError) {
-        if (contactError.code === '23505') {
-          // Unique violation
-          throw new Error('Contact already added');
-        }
-        throw contactError;
-      }
-
-      return profile.id;
+      return profile;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contacts', session?.user?.id] });
@@ -114,7 +98,6 @@ export function AddContactDialog() {
           </View>
           {addContactMutation.isError && (
             <Alert variant="destructive" icon={AlertCircle}>
-              <AlertTitle>Error</AlertTitle>
               <AlertDescription>{addContactMutation.error.message}</AlertDescription>
             </Alert>
           )}

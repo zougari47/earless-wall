@@ -1,0 +1,1 @@
+drop policy if exists select_own_profile on public.profiles;
